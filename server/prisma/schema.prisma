@@ -1,0 +1,130 @@
+// RentEase Kenya - Prisma schema (PostgreSQL)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  LANDLORD
+  TENANT
+  CARETAKER
+}
+
+enum UnitStatus {
+  OCCUPIED
+  VACANT
+}
+
+enum PaymentStatus {
+  PAID
+  PARTIAL
+  UNPAID
+}
+
+enum MaintenanceStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String
+  role      Role
+  createdAt DateTime @default(now())
+
+  // Relations
+  propertiesOwned      Property[]           @relation("LandlordProperties")
+  tenantProfile        Tenant?
+  caretakerAssignments Property[]           @relation("CaretakerProperties")
+  maintenanceAssigned  MaintenanceRequest[] @relation("CaretakerRequests")
+  notifications        Notification[]
+}
+
+model Property {
+  id          Int      @id @default(autoincrement())
+  name        String
+  location    String
+  landlordId  Int
+  landlord    User     @relation("LandlordProperties", fields: [landlordId], references: [id])
+  caretakerId Int?
+  caretaker   User?    @relation("CaretakerProperties", fields: [caretakerId], references: [id])
+  createdAt   DateTime @default(now())
+
+  units Unit[]
+}
+
+model Unit {
+  id         Int        @id @default(autoincrement())
+  unitNumber String
+  type       String
+  rentAmount Float
+  propertyId Int
+  property   Property   @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  status     UnitStatus @default(VACANT)
+
+  tenants             Tenant[]
+  payments            RentPayment[]
+  maintenanceRequests MaintenanceRequest[]
+}
+
+model Tenant {
+  id           Int       @id @default(autoincrement())
+  userId       Int       @unique
+  user         User      @relation(fields: [userId], references: [id])
+  unitId       Int
+  unit         Unit      @relation(fields: [unitId], references: [id])
+  moveInDate   DateTime
+  depositPaid  Float
+  leaseEndDate DateTime?
+
+  payments            RentPayment[]
+  maintenanceRequests MaintenanceRequest[]
+}
+
+model RentPayment {
+  id         Int           @id @default(autoincrement())
+  tenantId   Int
+  tenant     Tenant        @relation(fields: [tenantId], references: [id])
+  unitId     Int
+  unit       Unit          @relation(fields: [unitId], references: [id])
+  amount     Float
+  mpesaRef   String?
+  month      Int
+  year       Int
+  status     PaymentStatus @default(UNPAID)
+  receiptUrl String?
+  createdAt  DateTime      @default(now())
+}
+
+model MaintenanceRequest {
+  id          Int                @id @default(autoincrement())
+  tenantId    Int
+  tenant      Tenant             @relation(fields: [tenantId], references: [id])
+  unitId      Int
+  unit        Unit               @relation(fields: [unitId], references: [id])
+  description String
+  photoUrl    String?
+  status      MaintenanceStatus  @default(PENDING)
+  caretakerId Int?
+  caretaker   User?              @relation("CaretakerRequests", fields: [caretakerId], references: [id])
+  createdAt   DateTime           @default(now())
+  resolvedAt  DateTime?
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
