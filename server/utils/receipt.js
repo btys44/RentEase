@@ -29,21 +29,19 @@ function generateReceipt({ payment, tenant, unit, property, landlordName }) {
       .fill('#15803d');
 
     doc
-      .fillColor('#ffffff')
-      .fontSize(10)
-      .text('[ LOGO ]', 40, 20, { width: 60 });
+      .image(path.join(__dirname, '..', 'assets', 'logo.png'), 40, 25, { width: 40, height: 40 });
 
     doc
       .fillColor('#ffffff')
       .fontSize(20)
       .font('Helvetica-Bold')
-      .text('RentEase Kenya', 40, 38);
+      .text('RentEase Kenya', 90, 38);
 
     doc
       .fontSize(10)
       .font('Helvetica')
       .fillColor('#dcfce7')
-      .text('Rental Property Management System', 40, 64);
+      .text('Rental Property Management System', 90, 64);
 
     doc.fillColor('#000000');
 

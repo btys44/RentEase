@@ -57,10 +57,10 @@ export default function LandlordDashboard() {
   });
 
   const cards = [
-    { label: 'Total Units', value: totalUnits, icon: '🏢', color: 'text-brand-700' },
-    { label: 'Occupied', value: occupied, icon: '✅', color: 'text-green-600' },
-    { label: 'Vacant', value: vacant, icon: '🔑', color: 'text-gray-500' },
-    { label: 'Monthly Revenue', value: `KES ${monthlyRevenue.toLocaleString('en-KE')}`, icon: '💰', color: 'text-brand-700' },
+    { label: 'Total Units', value: totalUnits, color: 'text-brand-700' },
+    { label: 'Occupied', value: occupied, color: 'text-green-600' },
+    { label: 'Vacant', value: vacant, color: 'text-gray-500' },
+    { label: 'Monthly Revenue', value: `KES ${monthlyRevenue.toLocaleString('en-KE')}`, color: 'text-brand-700' },
   ];
 
   return (
@@ -73,11 +73,9 @@ export default function LandlordDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((c) => (
           <div key={c.label} className="card">
-            <div className="flex items-center justify-between">
+            
               <p className="text-sm text-gray-500">{c.label}</p>
-              <span className="text-xl">{c.icon}</span>
-            </div>
-            <p className={`text-2xl font-bold mt-2 ${c.color}`}>{c.value}</p>
+              <p className={`text-2xl font-bold mt-2 ${c.color}`}>{c.value}</p>
           </div>
         ))}
       </div>

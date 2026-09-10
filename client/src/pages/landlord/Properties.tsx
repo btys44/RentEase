@@ -5,12 +5,19 @@ import { Property, Unit } from '../../utils/types';
 import Spinner from '../../components/Spinner';
 import StatusBadge from '../../components/StatusBadge';
 
+interface CaretakerOption {
+  id: number;
+  name: string;
+  email: string;
+}
+
 export default function LandlordProperties() {
   const [properties, setProperties] = useState<Property[]>([]);
+  const [caretakers, setCaretakers] = useState<CaretakerOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [showPropertyForm, setShowPropertyForm] = useState(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
-  const [propertyForm, setPropertyForm] = useState({ name: '', location: '' });
+  const [propertyForm, setPropertyForm] = useState({ name: '', location: '', caretakerId: '' });
   const [saving, setSaving] = useState(false);
 
   const [unitFormFor, setUnitFormFor] = useState<number | null>(null);
@@ -21,8 +28,12 @@ export default function LandlordProperties() {
   async function load() {
     try {
       setLoading(true);
-      const res = await api.get('/properties');
-      setProperties(res.data);
+      const [propsRes, caretakersRes] = await Promise.all([
+        api.get('/properties'),
+        api.get('/users', { params: { role: 'CARETAKER' } }),
+      ]);
+      setProperties(propsRes.data);
+      setCaretakers(caretakersRes.data);
     } catch (err) {
       toast.error(getErrorMessage(err));
     } finally {
@@ -36,13 +47,13 @@ export default function LandlordProperties() {
 
   function openNewProperty() {
     setEditingProperty(null);
-    setPropertyForm({ name: '', location: '' });
+    setPropertyForm({ name: '', location: '', caretakerId: '' });
     setShowPropertyForm(true);
   }
 
   function openEditProperty(p: Property) {
     setEditingProperty(p);
-    setPropertyForm({ name: p.name, location: p.location });
+    setPropertyForm({ name: p.name, location: p.location, caretakerId: p.caretakerId ? String(p.caretakerId) : '' });
     setShowPropertyForm(true);
   }
 
@@ -54,11 +65,16 @@ export default function LandlordProperties() {
     }
     setSaving(true);
     try {
+      const payload = {
+        name: propertyForm.name,
+        location: propertyForm.location,
+        caretakerId: propertyForm.caretakerId || null,
+      };
       if (editingProperty) {
-        await api.put(`/properties/${editingProperty.id}`, propertyForm);
+        await api.put(`/properties/${editingProperty.id}`, payload);
         toast.success('Property updated.');
       } else {
-        await api.post('/properties', propertyForm);
+        await api.post('/properties', payload);
         toast.success('Property added.');
       }
       setShowPropertyForm(false);
@@ -256,6 +272,18 @@ export default function LandlordProperties() {
               <div>
                 <label className="label">Location</label>
                 <input className="input-field" value={propertyForm.location} onChange={(e) => setPropertyForm((f) => ({ ...f, location: e.target.value }))} placeholder="Kikuyu, Kiambu County" />
+              </div>
+              <div>
+                <label className="label">Assign Caretaker (optional)</label>
+                <select className="input-field" value={propertyForm.caretakerId} onChange={(e) => setPropertyForm((f) => ({ ...f, caretakerId: e.target.value }))}>
+                  <option value="">No caretaker assigned</option>
+                  {caretakers.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name} ({c.email})</option>
+                  ))}
+                </select>
+                {caretakers.length === 0 && (
+                  <p className="text-xs text-gray-400 mt-1">No caretaker accounts exist yet — ask a caretaker to register first.</p>
+                )}
               </div>
               <div className="flex gap-2 justify-end">
                 <button type="button" className="btn-secondary" onClick={() => setShowPropertyForm(false)}>

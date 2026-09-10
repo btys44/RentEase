@@ -81,12 +81,7 @@ export default function Login() {
           </Link>
         </p>
 
-        <div className="mt-6 text-xs text-gray-400 bg-white rounded-lg p-3 border border-gray-100">
-          <p className="font-semibold mb-1">Demo accounts (password: password123)</p>
-          <p>Landlord: landlord@rentease.co.ke</p>
-          <p>Caretaker: caretaker@rentease.co.ke</p>
-          <p>Tenant: tenant1@rentease.co.ke</p>
-        </div>
+        
       </div>
     </div>
   );

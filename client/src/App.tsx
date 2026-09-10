@@ -3,8 +3,11 @@ import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 
+
 import Login from './pages/Login';
 import Register from './pages/Register';
+import HelpDesk from './pages/HelpDesk';
+
 
 import LandlordDashboard from './pages/landlord/Dashboard';
 import LandlordProperties from './pages/landlord/Properties';
@@ -13,12 +16,15 @@ import LandlordPayments from './pages/landlord/Payments';
 import LandlordMaintenance from './pages/landlord/Maintenance';
 import LandlordReports from './pages/landlord/Reports';
 
+
 import TenantDashboard from './pages/tenant/Dashboard';
 import TenantPayments from './pages/tenant/Payments';
 import TenantMaintenance from './pages/tenant/Maintenance';
 
+
 import CaretakerDashboard from './pages/caretaker/Dashboard';
 import CaretakerMaintenance from './pages/caretaker/Maintenance';
+
 
 function HomeRedirect() {
   const { user, loading } = useAuth();
@@ -41,17 +47,21 @@ export default function App() {
       <Route path="/landlord/payments" element={<ProtectedRoute allowedRoles={['LANDLORD']}><Layout><LandlordPayments /></Layout></ProtectedRoute>} />
       <Route path="/landlord/maintenance" element={<ProtectedRoute allowedRoles={['LANDLORD']}><Layout><LandlordMaintenance /></Layout></ProtectedRoute>} />
       <Route path="/landlord/reports" element={<ProtectedRoute allowedRoles={['LANDLORD']}><Layout><LandlordReports /></Layout></ProtectedRoute>} />
+      <Route path="/help" element={<ProtectedRoute><Layout><HelpDesk /></Layout></ProtectedRoute>} />
 
       {/* Tenant */}
       <Route path="/tenant" element={<ProtectedRoute allowedRoles={['TENANT']}><Layout><TenantDashboard /></Layout></ProtectedRoute>} />
       <Route path="/tenant/payments" element={<ProtectedRoute allowedRoles={['TENANT']}><Layout><TenantPayments /></Layout></ProtectedRoute>} />
       <Route path="/tenant/maintenance" element={<ProtectedRoute allowedRoles={['TENANT']}><Layout><TenantMaintenance /></Layout></ProtectedRoute>} />
+      <Route path="/help" element={<ProtectedRoute><Layout><HelpDesk /></Layout></ProtectedRoute>} />
 
       {/* Caretaker */}
       <Route path="/caretaker" element={<ProtectedRoute allowedRoles={['CARETAKER']}><Layout><CaretakerDashboard /></Layout></ProtectedRoute>} />
       <Route path="/caretaker/maintenance" element={<ProtectedRoute allowedRoles={['CARETAKER']}><Layout><CaretakerMaintenance /></Layout></ProtectedRoute>} />
+      <Route path="/help" element={<ProtectedRoute><Layout><HelpDesk /></Layout></ProtectedRoute>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
+      
     </Routes>
   );
 }

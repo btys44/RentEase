@@ -180,30 +180,30 @@ export default function LandlordTenants() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4 py-8 overflow-y-auto">
           <div className="bg-white rounded-xl p-6 w-full max-w-lg">
             <h2 className="font-semibold text-lg mb-4">Add Tenant</h2>
-            <form onSubmit={submit} className="space-y-4">
-              <div>
-                <label className="label">Assign to Unit</label>
-                <select className="input-field" value={form.unitId} onChange={(e) => setForm((f) => ({ ...f, unitId: e.target.value }))}>
-                  <option value="">Select a vacant unit</option>
-                  {vacantUnits.map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {u.propertyName} — {u.unitNumber} ({u.type}, KES {u.rentAmount.toLocaleString('en-KE')})
-                    </option>
-                  ))}
-                </select>
-                {vacantUnits.length === 0 && <p className="text-xs text-gray-400 mt-1">No vacant units available. Add a property/unit first.</p>}
-              </div>
+              <form onSubmit={submit} className="space-y-4">
+                <div className="flex gap-2">
+                  <button type="button" onClick={() => setLinkMode('new')} className={`flex-1 text-sm py-2 rounded-lg border ${linkMode === 'new' ? 'bg-brand-700 text-white border-brand-700' : 'border-gray-300 text-gray-600'}`}>
+                    New tenant account
+                  </button>
+                  <button type="button" onClick={() => setLinkMode('existing')} className={`flex-1 text-sm py-2 rounded-lg border ${linkMode === 'existing' ? 'bg-brand-700 text-white border-brand-700' : 'border-gray-300 text-gray-600'}`}>
+                    Link existing account
+                  </button>
+                </div>
 
-              <div className="flex gap-2">
-                <button type="button" onClick={() => setLinkMode('new')} className={`flex-1 text-sm py-2 rounded-lg border ${linkMode === 'new' ? 'bg-brand-700 text-white border-brand-700' : 'border-gray-300 text-gray-600'}`}>
-                  New tenant account
-                </button>
-                <button type="button" onClick={() => setLinkMode('existing')} className={`flex-1 text-sm py-2 rounded-lg border ${linkMode === 'existing' ? 'bg-brand-700 text-white border-brand-700' : 'border-gray-300 text-gray-600'}`}>
-                  Link existing account
-                </button>
-              </div>
+                <div>
+                  <label className="label">Assign to Unit</label>
+                  <select className="input-field" value={form.unitId} onChange={(e) => setForm((f) => ({ ...f, unitId: e.target.value }))}>
+                    <option value="">Select a vacant unit</option>
+                    {vacantUnits.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.propertyName} — {u.unitNumber} ({u.type}, KES {u.rentAmount.toLocaleString('en-KE')})
+                      </option>
+                    ))}
+                  </select>
+                  {vacantUnits.length === 0 && <p className="text-xs text-gray-400 mt-1">No vacant units available. Add a property/unit first.</p>}
+                </div>
 
-              {linkMode === 'existing' ? (
+                {linkMode === 'existing' ? (
                 <div>
                   <label className="label">Existing Tenant Account</label>
                   <select className="input-field" value={form.userId} onChange={(e) => setForm((f) => ({ ...f, userId: e.target.value }))}>

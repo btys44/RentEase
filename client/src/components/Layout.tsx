@@ -6,26 +6,29 @@ import NotificationBell from './NotificationBell';
 interface NavItem {
   label: string;
   to: string;
-  icon: string;
+  
 }
 
 const NAV_ITEMS: Record<string, NavItem[]> = {
   LANDLORD: [
-    { label: 'Dashboard', to: '/landlord', icon: '📊' },
-    { label: 'Properties', to: '/landlord/properties', icon: '🏢' },
-    { label: 'Tenants', to: '/landlord/tenants', icon: '👥' },
-    { label: 'Payments', to: '/landlord/payments', icon: '💰' },
-    { label: 'Maintenance', to: '/landlord/maintenance', icon: '🔧' },
-    { label: 'Reports', to: '/landlord/reports', icon: '📈' },
+    { label: 'Dashboard', to: '/landlord'},
+    { label: 'Properties', to: '/landlord/properties' },
+    { label: 'Tenants', to: '/landlord/tenants' },
+    { label: 'Payments', to: '/landlord/payments'},
+    { label: 'Maintenance', to: '/landlord/maintenance'},
+    { label: 'Reports', to: '/landlord/reports'},
+    { label: 'Help Desk', to: '/help' },
   ],
   TENANT: [
-    { label: 'Dashboard', to: '/tenant', icon: '🏠' },
-    { label: 'Payments', to: '/tenant/payments', icon: '💰' },
-    { label: 'Maintenance', to: '/tenant/maintenance', icon: '🔧' },
+    { label: 'Dashboard', to: '/tenant'},
+    { label: 'Payments', to: '/tenant/payments'},
+    { label: 'Maintenance', to: '/tenant/maintenance'},
+    { label: 'Help Desk', to: '/help' },
   ],
   CARETAKER: [
-    { label: 'Dashboard', to: '/caretaker', icon: '📋' },
-    { label: 'Maintenance', to: '/caretaker/maintenance', icon: '🔧' },
+    { label: 'Dashboard', to: '/caretaker'},
+    { label: 'Maintenance', to: '/caretaker/maintenance'},
+    { label: 'Help Desk', to: '/help' },
   ],
 };
 
@@ -44,7 +47,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="h-screen flex bg-gray-50 overflow-hidden">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -55,8 +58,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static z-40 top-0 left-0 h-full w-64 bg-brand-800 text-white transform transition-transform duration-200 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 flex flex-col`}
+        className={`fixed lg:static z-40 top-0 left-0 h-screen lg:h-auto w-64 bg-brand-800 text-white transform transition-transform duration-200 ease-in-out
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 flex flex-col overflow-hidden`}
       >
         <div className="px-5 py-5 border-b border-brand-700 flex items-center gap-2">
           <span className="text-2xl">🏡</span>
@@ -66,7 +69,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1px-3 py-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -79,7 +82,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 }`
               }
             >
-              <span>{item.icon}</span>
+              
               {item.label}
             </NavLink>
           ))}
@@ -94,13 +97,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             onClick={handleLogout}
             className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-brand-100 hover:bg-brand-700/60 transition-colors"
           >
-            🚪 Logout
+            Logout
           </button>
         </div>
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 min-w-0 flex flex-col">
+      <div className="flex-1 min-w-0 flex flex-col overflow-y-auto">
         <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-20">
           <button className="lg:hidden text-2xl" onClick={() => setSidebarOpen(true)} aria-label="Open menu">
             ☰

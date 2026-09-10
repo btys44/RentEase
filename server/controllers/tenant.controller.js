@@ -129,6 +129,7 @@ exports.myProfile = async (req, res, next) => {
     const tenant = await prisma.tenant.findUnique({
       where: { userId: req.user.id },
       include: {
+        user: { select: { id: true, name: true, email: true, phone: true } },
         unit: { include: { property: true } },
         payments: { orderBy: { createdAt: 'desc' } },
       },
