@@ -92,14 +92,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="px-3 py-2 mb-2">
             <p className="text-sm font-semibold truncate">{user.name}</p>
             <p className="text-xs text-brand-200 truncate">{user.role}</p>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-brand-100 hover:bg-brand-700/60 transition-colors"
-          >
-            Logout
-          </button>
         </div>
+        <NavLink
+          to="/change-password"
+          onClick={() => setSidebarOpen(false)}
+          className="block px-3 py-2 rounded-lg text-sm font-medium text-brand-100 hover:bg-brand-700/60 transition-colors"
+        >
+          Change Password
+        </NavLink>
+        <button
+          onClick={handleLogout}
+          className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-brand-100 hover:bg-brand-700/60 transition-colors"
+        >
+          Logout
+        </button>
+      </div>
       </aside>
 
       {/* Main content */}

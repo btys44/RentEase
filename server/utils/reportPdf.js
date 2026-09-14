@@ -22,7 +22,8 @@ function generateReportPdf({ revenueByProperty, outstanding, occupancy, landlord
     doc.pipe(stream);
 
     doc.rect(0, 0, doc.page.width, 70).fill('#15803d');
-    doc.fillColor('#ffffff').fontSize(18).font('Helvetica-Bold').text('RentEase Kenya - Report', 40, 24);
+    doc.image(path.join(__dirname, '..', 'assets', 'logo.png'), 40, 15, { width: 40, height: 40 });
+    doc.fillColor('#ffffff').fontSize(18).font('Helvetica-Bold').text('RentEase Kenya - Report', 90, 26);
     doc.fillColor('#000000');
 
     let y = 100;

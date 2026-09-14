@@ -12,6 +12,7 @@ const paymentRoutes = require('./routes/payment.routes');
 const maintenanceRoutes = require('./routes/maintenance.routes');
 const reportRoutes = require('./routes/report.routes');
 const notificationRoutes = require('./routes/notification.routes');
+const helpdeskRoutes = require('./routes/helpdesk.routes');
 const userRoutes = require('./routes/user.routes');
 
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/helpdesk', helpdeskRoutes);
 app.use('/api/users', userRoutes);
 
 // 404 handler

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { getErrorMessage } from '../utils/api';
+import PasswordInput from '../components/PasswordInput';
 
 export default function Login() {
   const { login } = useAuth();
@@ -57,17 +58,13 @@ export default function Login() {
             {errors.email && <p className="text-red-600 text-xs mt-1">{errors.email}</p>}
           </div>
 
-          <div>
-            <label className="label">Password</label>
-            <input
-              type="password"
-              className="input-field"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
-            {errors.password && <p className="text-red-600 text-xs mt-1">{errors.password}</p>}
-          </div>
+          <PasswordInput
+            label="Password"
+            value={password}
+            onChange={setPassword}
+            placeholder="••••••••"
+            error={errors.password}
+          />
 
           <button type="submit" disabled={loading} className="btn-primary w-full">
             {loading ? 'Signing in...' : 'Sign In'}
@@ -80,8 +77,6 @@ export default function Login() {
             Register
           </Link>
         </p>
-
-        
       </div>
     </div>
   );

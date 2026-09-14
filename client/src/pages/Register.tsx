@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth, Role } from '../context/AuthContext';
 import { getErrorMessage } from '../utils/api';
+import PasswordInput from '../components/PasswordInput';
 
 export default function Register() {
   const { register } = useAuth();
@@ -71,11 +72,13 @@ export default function Register() {
             {errors.phone && <p className="text-red-600 text-xs mt-1">{errors.phone}</p>}
           </div>
 
-          <div>
-            <label className="label">Password</label>
-            <input type="password" className="input-field" value={form.password} onChange={(e) => update('password', e.target.value)} placeholder="At least 6 characters" />
-            {errors.password && <p className="text-red-600 text-xs mt-1">{errors.password}</p>}
-          </div>
+          <PasswordInput
+            label="Password"
+            value={form.password}
+            onChange={(v) => update('password', v)}
+            placeholder="At least 6 characters"
+            error={errors.password}
+          />
 
           <div>
             <label className="label">I am a...</label>

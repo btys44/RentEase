@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
+import ChangePassword from './pages/ChangePassword';
 
 
 import Login from './pages/Login';
@@ -48,17 +49,20 @@ export default function App() {
       <Route path="/landlord/maintenance" element={<ProtectedRoute allowedRoles={['LANDLORD']}><Layout><LandlordMaintenance /></Layout></ProtectedRoute>} />
       <Route path="/landlord/reports" element={<ProtectedRoute allowedRoles={['LANDLORD']}><Layout><LandlordReports /></Layout></ProtectedRoute>} />
       <Route path="/help" element={<ProtectedRoute><Layout><HelpDesk /></Layout></ProtectedRoute>} />
+      <Route path="/change-password" element={<ProtectedRoute><Layout><ChangePassword /></Layout></ProtectedRoute>} />
 
       {/* Tenant */}
       <Route path="/tenant" element={<ProtectedRoute allowedRoles={['TENANT']}><Layout><TenantDashboard /></Layout></ProtectedRoute>} />
       <Route path="/tenant/payments" element={<ProtectedRoute allowedRoles={['TENANT']}><Layout><TenantPayments /></Layout></ProtectedRoute>} />
       <Route path="/tenant/maintenance" element={<ProtectedRoute allowedRoles={['TENANT']}><Layout><TenantMaintenance /></Layout></ProtectedRoute>} />
       <Route path="/help" element={<ProtectedRoute><Layout><HelpDesk /></Layout></ProtectedRoute>} />
+      <Route path="/change-password" element={<ProtectedRoute><Layout><ChangePassword /></Layout></ProtectedRoute>} />
 
       {/* Caretaker */}
       <Route path="/caretaker" element={<ProtectedRoute allowedRoles={['CARETAKER']}><Layout><CaretakerDashboard /></Layout></ProtectedRoute>} />
       <Route path="/caretaker/maintenance" element={<ProtectedRoute allowedRoles={['CARETAKER']}><Layout><CaretakerMaintenance /></Layout></ProtectedRoute>} />
       <Route path="/help" element={<ProtectedRoute><Layout><HelpDesk /></Layout></ProtectedRoute>} />
+      <Route path="/change-password" element={<ProtectedRoute><Layout><ChangePassword /></Layout></ProtectedRoute>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
       

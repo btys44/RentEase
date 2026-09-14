@@ -111,8 +111,12 @@ export default function LandlordProperties() {
 
   async function submitUnit(e: FormEvent) {
     e.preventDefault();
-    if (!unitForm.unitNumber.trim() || !unitForm.type.trim() || !unitForm.rentAmount) {
-      toast.error('Unit number, type and rent amount are required.');
+    if (!unitForm.unitNumber.trim() || !unitForm.type.trim()) {
+      toast.error('Unit number and type are required.');
+      return;
+    }
+    if (!unitForm.rentAmount || Number(unitForm.rentAmount) <= 0) {
+      toast.error('Rent amount must be a positive number.');
       return;
     }
     setSavingUnit(true);

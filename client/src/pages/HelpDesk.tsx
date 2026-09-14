@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FAQ_ITEMS } from '../utils/faqData';
+import api from '../utils/api';
 
 export default function HelpDesk() {
   const { user } = useAuth();
@@ -34,6 +35,8 @@ export default function HelpDesk() {
         <p className="text-gray-500 text-sm">Answers to common questions about using RentEase Kenya</p>
       </div>
 
+      <AskAssistant />
+
       <input
         className="input-field"
         placeholder="Search for a question..."
@@ -65,5 +68,48 @@ export default function HelpDesk() {
         )}
       </div>
     </div>
+  );
+}
+
+function AskAssistant() {
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [asking, setAsking] = useState(false);
+
+  async function handleAsk(e: React.FormEvent) {
+    e.preventDefault();
+    if (!question.trim()) return;
+    setAsking(true);
+    setAnswer('');
+    try {
+      const res = await api.post('/helpdesk/ask', { question });
+      setAnswer(res.data.answer);
+    } catch (err) {
+      setAnswer('Sorry, the assistant is unavailable right now. Please try the FAQ below or contact your landlord.');
+    } finally {
+      setAsking(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleAsk} className="card space-y-3">
+      <label className="label">Ask the RentEase Assistant</label>
+      <div className="flex gap-2">
+        <input
+          className="input-field"
+          placeholder="e.g. How do I see who hasn't paid rent this month?"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+        />
+        <button type="submit" disabled={asking} className="btn-primary whitespace-nowrap">
+          {asking ? 'Asking...' : 'Ask'}
+        </button>
+      </div>
+      {answer && (
+        <div className="bg-brand-50 border border-brand-100 rounded-lg p-3 text-sm text-gray-800">
+          {answer}
+        </div>
+      )}
+    </form>
   );
 }

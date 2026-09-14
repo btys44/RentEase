@@ -4,6 +4,7 @@ import api, { getErrorMessage } from '../../utils/api';
 import { Tenant, Property } from '../../utils/types';
 import Spinner from '../../components/Spinner';
 import StatusBadge from '../../components/StatusBadge';
+import PasswordInput from '../../components/PasswordInput';
 
 export default function LandlordTenants() {
   const [tenants, setTenants] = useState<Tenant[]>([]);
@@ -65,17 +66,39 @@ export default function LandlordTenants() {
 
   async function submit(e: FormEvent) {
     e.preventDefault();
-    if (!form.unitId || !form.moveInDate || !form.depositPaid) {
-      toast.error('Unit, move-in date and deposit paid are required.');
+    if (!form.unitId) {
+      toast.error('Please select a unit.');
+      return;
+    }
+    if (!form.moveInDate) {
+      toast.error('Please select a move-in date.');
+      return;
+    }
+    if (!form.depositPaid || Number(form.depositPaid) <= 0) {
+      toast.error('Deposit paid must be a positive number.');
       return;
     }
     if (linkMode === 'existing' && !form.userId) {
       toast.error('Select an existing tenant account.');
       return;
     }
-    if (linkMode === 'new' && (!form.name || !form.email || !form.phone || !form.password)) {
-      toast.error('Fill in the new tenant\'s name, email, phone and password.');
-      return;
+    if (linkMode === 'new') {
+      if (!form.name.trim()) {
+        toast.error('Full name is required.');
+        return;
+      }
+      if (!/^\S+@\S+\.\S+$/.test(form.email)) {
+        toast.error('Enter a valid email address.');
+        return;
+      }
+      if (!/^\+?\d{9,15}$/.test(form.phone.replace(/\s/g, ''))) {
+        toast.error('Enter a valid phone number (e.g. +254712345678).');
+        return;
+      }
+      if (form.password.length < 6) {
+        toast.error('Password must be at least 6 characters.');
+        return;
+      }
     }
 
     setSaving(true);
@@ -231,10 +254,12 @@ export default function LandlordTenants() {
                     <label className="label">Email</label>
                     <input type="email" className="input-field" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} />
                   </div>
-                  <div>
-                    <label className="label">Password (for tenant login)</label>
-                    <input type="password" className="input-field" value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} placeholder="At least 6 characters" />
-                  </div>
+                  <PasswordInput
+                    label="Password (for tenant login)"
+                    value={form.password}
+                    onChange={(v) => setForm((f) => ({ ...f, password: v }))}
+                    placeholder="At least 6 characters"
+                  />
                 </>
               )}
 
