@@ -60,10 +60,12 @@ exports.create = async (req, res, next) => {
         message: `Payment of KES ${amount} recorded for ${tenant.unit.unitNumber} (${paymentStatus}). Receipt available in your dashboard.`,
       },
     });
-    await sendSMS(
-      tenant.user.phone,
-      `RentEase: Payment of KES ${amount} received for unit ${tenant.unit.unitNumber}. Status: ${paymentStatus}.`
-    );
+    if (tenant.user.receiveSmsNotifications) {
+      await sendSMS(
+        tenant.user.phone,
+        `RentEase: Payment of KES ${amount} received for unit ${tenant.unit.unitNumber}. Status: ${paymentStatus}.`
+      );
+    }
 
     res.status(201).json(updatedPayment);
   } catch (err) {

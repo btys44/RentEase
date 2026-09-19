@@ -2,7 +2,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
-import ChangePassword from './pages/ChangePassword';
+import Settings from './pages/Settings';
+import Landing from './pages/Landing';
 
 
 import Login from './pages/Login';
@@ -27,17 +28,12 @@ import CaretakerDashboard from './pages/caretaker/Dashboard';
 import CaretakerMaintenance from './pages/caretaker/Maintenance';
 
 
-function HomeRedirect() {
-  const { user, loading } = useAuth();
-  if (loading) return null;
-  if (!user) return <Navigate to="/login" replace />;
-  return <Navigate to={`/${user.role.toLowerCase()}`} replace />;
-}
+
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomeRedirect />} />
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
@@ -49,21 +45,21 @@ export default function App() {
       <Route path="/landlord/maintenance" element={<ProtectedRoute allowedRoles={['LANDLORD']}><Layout><LandlordMaintenance /></Layout></ProtectedRoute>} />
       <Route path="/landlord/reports" element={<ProtectedRoute allowedRoles={['LANDLORD']}><Layout><LandlordReports /></Layout></ProtectedRoute>} />
       <Route path="/help" element={<ProtectedRoute><Layout><HelpDesk /></Layout></ProtectedRoute>} />
-      <Route path="/change-password" element={<ProtectedRoute><Layout><ChangePassword /></Layout></ProtectedRoute>} />
-
+      <Route path="/settings" element={<ProtectedRoute><Layout><Settings /></Layout></ProtectedRoute>} />
+      
       {/* Tenant */}
       <Route path="/tenant" element={<ProtectedRoute allowedRoles={['TENANT']}><Layout><TenantDashboard /></Layout></ProtectedRoute>} />
       <Route path="/tenant/payments" element={<ProtectedRoute allowedRoles={['TENANT']}><Layout><TenantPayments /></Layout></ProtectedRoute>} />
       <Route path="/tenant/maintenance" element={<ProtectedRoute allowedRoles={['TENANT']}><Layout><TenantMaintenance /></Layout></ProtectedRoute>} />
       <Route path="/help" element={<ProtectedRoute><Layout><HelpDesk /></Layout></ProtectedRoute>} />
-      <Route path="/change-password" element={<ProtectedRoute><Layout><ChangePassword /></Layout></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><Layout><Settings /></Layout></ProtectedRoute>} />
 
       {/* Caretaker */}
       <Route path="/caretaker" element={<ProtectedRoute allowedRoles={['CARETAKER']}><Layout><CaretakerDashboard /></Layout></ProtectedRoute>} />
       <Route path="/caretaker/maintenance" element={<ProtectedRoute allowedRoles={['CARETAKER']}><Layout><CaretakerMaintenance /></Layout></ProtectedRoute>} />
       <Route path="/help" element={<ProtectedRoute><Layout><HelpDesk /></Layout></ProtectedRoute>} />
-      <Route path="/change-password" element={<ProtectedRoute><Layout><ChangePassword /></Layout></ProtectedRoute>} />
-
+      <Route path="/settings" element={<ProtectedRoute><Layout><Settings /></Layout></ProtectedRoute>} />
+      
       <Route path="*" element={<Navigate to="/" replace />} />
       
     </Routes>

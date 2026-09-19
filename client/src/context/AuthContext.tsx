@@ -9,6 +9,7 @@ export interface AuthUser {
   email: string;
   phone: string;
   role: Role;
+  receiveSmsNotifications: boolean;
 }
 
 interface AuthContextValue {
@@ -18,6 +19,7 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<AuthUser>;
   register: (data: { name: string; email: string; phone: string; password: string; role: Role }) => Promise<AuthUser>;
   logout: () => void;
+  updateUser: (user: AuthUser) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -63,8 +65,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   }
 
+  function updateUser(newUser: AuthUser) {
+    localStorage.setItem('rentease_user', JSON.stringify(newUser));
+    setUser(newUser);
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -39,6 +39,7 @@ model User {
   password  String
   phone     String
   role      Role
+  receiveSmsNotifications Boolean @default(true)
   createdAt DateTime @default(now())
 
   // Relations

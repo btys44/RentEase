@@ -37,7 +37,7 @@ exports.register = async (req, res, next) => {
     const token = signToken(user);
     res.status(201).json({
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone },
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone, receiveSmsNotifications: user.receiveSmsNotifications },
     });
   } catch (err) {
     next(err);
@@ -64,7 +64,7 @@ exports.login = async (req, res, next) => {
     const token = signToken(user);
     res.json({
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone },
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone, receiveSmsNotifications: user.receiveSmsNotifications },
     });
   } catch (err) {
     next(err);
@@ -75,7 +75,7 @@ exports.me = async (req, res, next) => {
   try {
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
     if (!user) return res.status(404).json({ message: 'User not found.' });
-    res.json({ id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone });
+    res.json({ id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone, receiveSmsNotifications: user.receiveSmsNotifications });
   } catch (err) {
     next(err);
   }
@@ -103,6 +103,35 @@ exports.changePassword = async (req, res, next) => {
     await prisma.user.update({ where: { id: user.id }, data: { password: hashed } });
 
     res.json({ message: 'Password updated successfully.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const { name, phone } = req.body;
+    if (!name || !phone) {
+      return res.status(400).json({ message: 'Name and phone are required.' });
+    }
+    const user = await prisma.user.update({
+      where: { id: req.user.id },
+      data: { name, phone },
+    });
+    res.json({ id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone, receiveSmsNotifications: user.receiveSmsNotifications });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updatePreferences = async (req, res, next) => {
+  try {
+    const { receiveSmsNotifications } = req.body;
+    const user = await prisma.user.update({
+      where: { id: req.user.id },
+      data: { receiveSmsNotifications: !!receiveSmsNotifications },
+    });
+    res.json({ receiveSmsNotifications: user.receiveSmsNotifications });
   } catch (err) {
     next(err);
   }

@@ -94,11 +94,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <p className="text-xs text-brand-200 truncate">{user.role}</p>
         </div>
         <NavLink
-          to="/change-password"
+          to="/settings"
           onClick={() => setSidebarOpen(false)}
           className="block px-3 py-2 rounded-lg text-sm font-medium text-brand-100 hover:bg-brand-700/60 transition-colors"
         >
-          Change Password
+          Settings
         </NavLink>
         <button
           onClick={handleLogout}
