@@ -98,7 +98,7 @@ exports.initiateStkPush = async (req, res, next) => {
 // List payments, filterable by month, year, propertyId, status
 exports.list = async (req, res, next) => {
   try {
-    const { month, year, propertyId, status } = req.query;
+    const { month, year, propertyId, status, tenantId } = req.query;
     const where = {};
 
     if (req.user.role === 'LANDLORD') {
@@ -112,6 +112,7 @@ exports.list = async (req, res, next) => {
     if (month) where.month = Number(month);
     if (year) where.year = Number(year);
     if (status) where.status = status.toUpperCase();
+    if (tenantId) where.tenantId = Number(tenantId);
     if (propertyId) {
       where.tenant = { ...where.tenant, unit: { property: { id: Number(propertyId) } } };
     }

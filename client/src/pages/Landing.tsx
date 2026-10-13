@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import heroImage from '../assets/hero.jpg';
+import { heroImage } from '../assets/hero.jpg';
 
 export default function Landing() {
   const { user } = useAuth();
@@ -36,7 +36,7 @@ export default function Landing() {
               Rental Property Management, Built for Kenya
             </h1>
             <p className="text-lg text-gray-100 mb-6">
-              Track rent payments, manage tenants, and handle maintenance requests — all in one place, with M-Pesa built in.
+              Track rent payments, manage tenants, and handle maintenance requests all in one place, with M-Pesa built in.
             </p>
             {!user && (
               <Link to="/register" className="btn-primary inline-block">
@@ -79,7 +79,7 @@ export default function Landing() {
       </section>
 
       <footer className="text-center text-xs text-gray-400 py-6">
-        © {new Date().getFullYear()} RentEase Kenya. Built as a final-year project at Egerton University.
+        © {new Date().getFullYear()} RentEase Kenya
       </footer>
     </div>
   );

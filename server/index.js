@@ -14,6 +14,7 @@ const reportRoutes = require('./routes/report.routes');
 const notificationRoutes = require('./routes/notification.routes');
 const helpdeskRoutes = require('./routes/helpdesk.routes');
 const userRoutes = require('./routes/user.routes');
+const adminRoutes = require('./routes/admin.routes');
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/helpdesk', helpdeskRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 handler
 app.use((req, res) => res.status(404).json({ message: 'Route not found' }));

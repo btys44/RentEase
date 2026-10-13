@@ -27,6 +27,15 @@ async function main() {
       role: 'LANDLORD',
     },
   });
+  const admin = await prisma.user.create({
+    data: {
+      name: 'System Administrator',
+      email: 'admin@rentease.co.ke',
+      phone: '+254712000000',
+      password: passwordHash,
+      role: 'ADMIN',
+    },
+  });
 
   const caretaker = await prisma.user.create({
     data: {

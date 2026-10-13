@@ -4,16 +4,25 @@ import api, { getErrorMessage } from '../../utils/api';
 import { RentPayment, MONTH_NAMES } from '../../utils/types';
 import Spinner from '../../components/Spinner';
 import StatusBadge from '../../components/StatusBadge';
+import MonthlyLedger from '../../components/MonthlyLedger';
 
 export default function TenantPayments() {
   const [payments, setPayments] = useState<RentPayment[]>([]);
+  const [moveInDate, setMoveInDate] = useState<string | null>(null);
+  const [rentAmount, setRentAmount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<'history' | 'ledger'>('history');
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await api.get('/payments');
-        setPayments(res.data);
+        const [paymentsRes, profileRes] = await Promise.all([
+          api.get('/payments'),
+          api.get('/tenants/me'),
+        ]);
+        setPayments(paymentsRes.data);
+        setMoveInDate(profileRes.data.moveInDate);
+        setRentAmount(profileRes.data.unit.rentAmount);
       } catch (err) {
         toast.error(getErrorMessage(err));
       } finally {
@@ -29,9 +38,30 @@ export default function TenantPayments() {
         <p className="text-gray-500 text-sm">Your rent payments and downloadable receipts</p>
       </div>
 
+      <div className="flex gap-2">
+        <button
+          onClick={() => setView('history')}
+          className={`px-3 py-1.5 rounded-full text-xs font-medium border ${view === 'history' ? 'bg-brand-700 text-white border-brand-700' : 'bg-white text-gray-600 border-gray-200'}`}
+        >
+          Payment History
+        </button>
+        <button
+          onClick={() => setView('ledger')}
+          className={`px-3 py-1.5 rounded-full text-xs font-medium border ${view === 'ledger' ? 'bg-brand-700 text-white border-brand-700' : 'bg-white text-gray-600 border-gray-200'}`}
+        >
+          Monthly Amount Due
+        </button>
+      </div>
+
       <div className="card overflow-x-auto">
         {loading ? (
           <div className="flex justify-center py-10"><Spinner size="h-8 w-8" /></div>
+        ) : view === 'ledger' ? (
+          moveInDate ? (
+            <MonthlyLedger moveInDate={moveInDate} rentAmount={rentAmount} payments={payments} />
+          ) : (
+            <p className="text-center text-gray-500 py-10">No tenancy record found.</p>
+          )
         ) : payments.length === 0 ? (
           <p className="text-center text-gray-500 py-10">No payments recorded yet.</p>
         ) : (

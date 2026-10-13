@@ -47,6 +47,12 @@ exports.create = async (req, res, next) => {
     if (unit.property.landlordId !== req.user.id) {
       return res.status(403).json({ message: 'Not your unit.' });
     }
+    if (userId) {
+      const existingTenant = await prisma.tenant.findUnique({ where: { userId: Number(userId) } });
+      if (existingTenant) {
+        return res.status(409).json({ message: 'This tenant account is already assigned to a unit.' });
+      }
+    }
 
     let tenantUserId = userId ? Number(userId) : null;
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
+
 
 interface NavItem {
   label: string;
@@ -28,6 +29,10 @@ const NAV_ITEMS: Record<string, NavItem[]> = {
   CARETAKER: [
     { label: 'Dashboard', to: '/caretaker'},
     { label: 'Maintenance', to: '/caretaker/maintenance'},
+    { label: 'Help Desk', to: '/help' },
+  ],
+  ADMIN: [
+    { label: 'Dashboard', to: '/admin' },
     { label: 'Help Desk', to: '/help' },
   ],
 };
@@ -61,13 +66,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         className={`fixed lg:static z-40 top-0 left-0 h-screen lg:h-auto w-64 bg-brand-800 text-white transform transition-transform duration-200 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 flex flex-col overflow-hidden`}
       >
-        <div className="px-5 py-5 border-b border-brand-700 flex items-center gap-2">
+        <Link to="/" className="px-5 py-5 border-b border-brand-700 flex items-center gap-2 hover:bg-brand-700/40 transition-colors">
           <span className="text-2xl">🏡</span>
           <div>
             <p className="font-bold text-lg leading-tight">RentEase</p>
             <p className="text-xs text-brand-200 leading-tight">Kenya</p>
           </div>
-        </div>
+        </Link>
 
         <nav className="flex-1px-3 py-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => (

@@ -5,6 +5,7 @@ import { Tenant, Property } from '../../utils/types';
 import Spinner from '../../components/Spinner';
 import StatusBadge from '../../components/StatusBadge';
 import PasswordInput from '../../components/PasswordInput';
+import MonthlyLedger from '../../components/MonthlyLedger';
 
 export default function LandlordTenants() {
   const [tenants, setTenants] = useState<Tenant[]>([]);
@@ -27,6 +28,56 @@ export default function LandlordTenants() {
     leaseEndDate: '',
   });
 
+  const [ledgerTenant, setLedgerTenant] = useState<Tenant | null>(null);
+  const [ledgerPayments, setLedgerPayments] = useState<{ month: number; year: number; amount: number }[]>([]);
+  const [ledgerLoading, setLedgerLoading] = useState(false);
+
+  const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);
+  const [editForm, setEditForm] = useState({ moveInDate: '', depositPaid: '', leaseEndDate: '' });
+  const [savingEdit, setSavingEdit] = useState(false);
+
+  async function openLedger(tenant: Tenant) {
+    setLedgerTenant(tenant);
+    setLedgerLoading(true);
+    try {
+      const res = await api.get('/payments', { params: { tenantId: tenant.id } });
+      setLedgerPayments(res.data);
+    } catch (err) {
+      toast.error(getErrorMessage(err));
+    } finally {
+      setLedgerLoading(false);
+    }
+  }
+
+  function openEdit(tenant: Tenant) {
+    setEditingTenant(tenant);
+    setEditForm({
+      moveInDate: tenant.moveInDate.slice(0, 10),
+      depositPaid: String(tenant.depositPaid),
+      leaseEndDate: tenant.leaseEndDate ? tenant.leaseEndDate.slice(0, 10) : '',
+    });
+  }
+
+  async function submitEdit(e: FormEvent) {
+    e.preventDefault();
+    if (!editingTenant) return;
+    setSavingEdit(true);
+    try {
+      await api.put(`/tenants/${editingTenant.id}`, {
+        moveInDate: editForm.moveInDate,
+        depositPaid: editForm.depositPaid,
+        leaseEndDate: editForm.leaseEndDate || null,
+      });
+      toast.success('Tenant details updated.');
+      setEditingTenant(null);
+      load();
+    } catch (err) {
+      toast.error(getErrorMessage(err));
+    } finally {
+      setSavingEdit(false);
+    }
+  }
+
   async function load() {
     try {
       setLoading(true);
@@ -46,7 +97,7 @@ export default function LandlordTenants() {
 
   async function loadExistingTenantUsers() {
     try {
-      const res = await api.get('/users', { params: { role: 'TENANT' } });
+      const res = await api.get('/users', { params: { role: 'TENANT', unassigned: 'true' } });
       setExistingUsers(res.data);
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -188,9 +239,17 @@ export default function LandlordTenants() {
                   <td className="py-2 pr-4">{t.leaseEndDate ? new Date(t.leaseEndDate).toLocaleDateString('en-KE') : '—'}</td>
                   <td className="py-2 pr-4">{t.payments?.[0] ? <StatusBadge status={t.payments[0].status} /> : <StatusBadge status="UNPAID" />}</td>
                   <td className="py-2 pr-4">
-                    <button className="text-red-600 text-xs hover:underline" onClick={() => removeTenant(t.id)}>
-                      Remove
-                    </button>
+                    <div className="flex gap-3">
+                      <button className="text-brand-700 text-xs hover:underline" onClick={() => openLedger(t)}>
+                        View Ledger
+                      </button>
+                      <button className="text-brand-700 text-xs hover:underline" onClick={() => openEdit(t)}>
+                        Edit
+                      </button>
+                      <button className="text-red-600 text-xs hover:underline" onClick={() => removeTenant(t.id)}>
+                        Remove
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -287,6 +346,58 @@ export default function LandlordTenants() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {editingTenant && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4 py-8 overflow-y-auto">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+            <h2 className="font-semibold text-lg mb-4">Edit Tenant — {editingTenant.user.name}</h2>
+            <form onSubmit={submitEdit} className="space-y-4">
+              <div>
+                <label className="label">Move-in Date</label>
+                <input type="date" className="input-field" value={editForm.moveInDate} onChange={(e) => setEditForm((f) => ({ ...f, moveInDate: e.target.value }))} />
+              </div>
+              <div>
+                <label className="label">Deposit Paid (KES)</label>
+                <input type="number" className="input-field" value={editForm.depositPaid} onChange={(e) => setEditForm((f) => ({ ...f, depositPaid: e.target.value }))} />
+              </div>
+              <div>
+                <label className="label">Lease End Date (optional)</label>
+                <input type="date" className="input-field" value={editForm.leaseEndDate} onChange={(e) => setEditForm((f) => ({ ...f, leaseEndDate: e.target.value }))} />
+              </div>
+              <div className="flex gap-2 justify-end pt-2">
+                <button type="button" className="btn-secondary" onClick={() => setEditingTenant(null)}>Cancel</button>
+                <button type="submit" disabled={savingEdit} className="btn-primary">{savingEdit ? 'Saving...' : 'Save Changes'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {ledgerTenant && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4 py-8">
+          <div className="bg-white rounded-xl w-full max-w-2xl max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100 shrink-0">
+              <h2 className="font-semibold text-lg">
+                Monthly Ledger — {ledgerTenant.user.name} ({ledgerTenant.unit.unitNumber})
+              </h2>
+              <button className="text-gray-400 hover:text-gray-600 text-xl leading-none" onClick={() => setLedgerTenant(null)}>
+                ✕
+              </button>
+            </div>
+            <div className="p-6 pt-4 overflow-y-auto">
+              {ledgerLoading ? (
+                <div className="flex justify-center py-10"><Spinner size="h-8 w-8" /></div>
+              ) : (
+                <MonthlyLedger
+                  moveInDate={ledgerTenant.moveInDate}
+                  rentAmount={ledgerTenant.unit.rentAmount}
+                  payments={ledgerPayments}
+                />
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -27,6 +27,8 @@ import TenantMaintenance from './pages/tenant/Maintenance';
 import CaretakerDashboard from './pages/caretaker/Dashboard';
 import CaretakerMaintenance from './pages/caretaker/Maintenance';
 
+import AdminDashboard from './pages/Admin/Dashboard';
+
 
 
 
@@ -59,6 +61,8 @@ export default function App() {
       <Route path="/caretaker/maintenance" element={<ProtectedRoute allowedRoles={['CARETAKER']}><Layout><CaretakerMaintenance /></Layout></ProtectedRoute>} />
       <Route path="/help" element={<ProtectedRoute><Layout><HelpDesk /></Layout></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><Layout><Settings /></Layout></ProtectedRoute>} />
+
+      <Route path="/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}><Layout><AdminDashboard /></Layout></ProtectedRoute>} />
       
       <Route path="*" element={<Navigate to="/" replace />} />
       
