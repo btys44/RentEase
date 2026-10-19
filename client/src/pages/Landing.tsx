@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { heroImage } from '../assets/hero.jpg';
+import heroImage from '../assets/hero.jpg';
 
 export default function Landing() {
   const { user } = useAuth();
